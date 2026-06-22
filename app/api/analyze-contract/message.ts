@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 interface LinkAnalysis {
     url: string;
@@ -25,20 +25,6 @@ function shouldShortCircuit(text: string, urls: string[]): boolean {
     return wordCount < MIN_WORDS_FOR_ANALYSIS && urls.length === 0 && !hasKeyword;
 }
 
-const messageSchema = {
-    type: SchemaType.OBJECT,
-    properties: {
-        verdict: {
-            type: SchemaType.STRING,
-            enum: ['clean', 'uncertain', 'scam_likely'],
-            description: 'clean = no concrete scam indicators present. uncertain = weak/ambiguous version of a real indicator. scam_likely = clear scam mechanics present.',
-        },
-        redFlags: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
-        reasoning: { type: SchemaType.STRING },
-    },
-    required: ['verdict', 'redFlags', 'reasoning'],
-};
-
 async function checkUrlReputation(url: string): Promise<{ reputation: 'safe' | 'suspicious' | 'dangerous'; reason: string }> {
     try {
         const domain = new URL(url).hostname;
@@ -47,7 +33,7 @@ async function checkUrlReputation(url: string): Promise<{ reputation: 'safe' | '
         }
         return { reputation: 'safe', reason: 'No known threats detected' };
     } catch (error) {
-        return { reputation: 'uncertain', reason: 'Unable to check URL' };
+        return { reputation: 'suspicious', reason: 'Unable to check URL' };
     }
 }
 
@@ -79,11 +65,10 @@ export async function analyzeMessageWithGemini(messageText: string): Promise<{
 
     const client = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
     const model = client.getGenerativeModel({
-        model: 'gemini-2.5-flash',
-        generationConfig: { responseMimeType: 'application/json', responseSchema: messageSchema },
+        model: 'gemini-2.5-flash'
     });
 
-    const prompt = `You are a financial scam and phishing detector. Analyze the message below ONLY for fraud-related indicators.
+    const prompt = `You are a financial scam and phishing detector. Analyze the message below ONLY for fraud-related indicators. Return ONLY valid JSON with no other text.
 
 THIS TOOL DETECTS: Financial scams, phishing, credential theft, payment fraud, fake authority impersonation.
 THIS TOOL DOES NOT ASSESS: Relationship safety, coercion, meeting logistics, personal dynamics.
@@ -105,6 +90,13 @@ DO NOT flag based on:
 
 If NONE of the financial/phishing indicators are present, respond with "clean" — even if the message has urgency or personal stakes.
 
+Respond with this JSON format only:
+{
+  "verdict": "clean" | "uncertain" | "scam_likely",
+  "redFlags": ["flag1", "flag2"],
+  "reasoning": "explanation"
+}
+
 Message:
 """
 ${messageText}
@@ -119,7 +111,13 @@ ${messageText}
 
     let analysis: MessageAnalysis;
     try {
-        analysis = JSON.parse(responseText);
+        // Extract JSON from response (handles cases where model adds extra text)
+        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) {
+            console.error('Failed to find JSON in response:', responseText);
+            throw new Error('Failed to parse message analysis response');
+        }
+        analysis = JSON.parse(jsonMatch[0]);
     } catch (error) {
         console.error('Failed to parse message analysis response:', responseText);
         throw new Error('Failed to parse message analysis response');
