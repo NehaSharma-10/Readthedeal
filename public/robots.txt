@@ -1,0 +1,23 @@
+# Read the Deal - robots.txt
+# Allow all bots to crawl
+
+User-agent: *
+Allow: /
+
+# Specific rules for search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Disallow admin and private paths
+Disallow: /admin/
+Disallow: /.next/
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://readthedeal.com/sitemap.xml
+
+# Crawl delay (optional - adjust as needed)
+Crawl-delay: 1

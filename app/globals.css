@@ -1,26 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,560;0,9..144,650;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper: #FAF6EC;
+  --color-paper-deep: #F1E9D6;
+  --color-paper-line: #E4DAC2;
+  --color-ink: #211D17;
+  --color-ink-soft: #615A4C;
+  --color-indigo: #3548C9;
+  --color-indigo-deep: #222F95;
+  --color-highlighter: #FFD23F;
+  --color-highlighter-deep: #F0B400;
+  --color-sage: #2E9E6D;
+  --color-blue-tint: #E7ECFB;
+  --color-peach-tint: #FBE7C6;
+  --color-card: #FFFFFF;
+  --radius-lg: 22px;
+  --radius-md: 14px;
+  --font-serif: 'Fraunces', serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Image optimization */
+img {
+  max-width: 100%;
+  display: block;
+  animation: fadeInScale 1.2s ease-in-out;
+  transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+  content-visibility: auto;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+img:hover {
+  transform: scale(1.02);
+}
+
+/* Link optimization */
+a {
+  color: inherit;
+  transition: all 200ms ease-out;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--color-indigo);
+  outline-offset: 2px;
+}
+
+/* Button optimization */
+button {
+  transition: all 200ms ease-out;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--color-indigo);
+  outline-offset: 2px;
+}
+
+/* Performance: Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Performance: High contrast mode support */
+@media (prefers-contrast: more) {
+  body {
+    color: #000;
+  }
 }
