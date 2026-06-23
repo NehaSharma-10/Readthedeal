@@ -4,7 +4,7 @@ const iconProps = {
     className: 'w-6 h-6',
 };
 
-export const ContractIcon = () => <MdDescription {...iconProps} className="w-6 h-6 text-[#3548C9]" />;
+export const ContractIcon = () => <MdDescription {...iconProps} className="w-6 h-6 text-[#1F2D7F]" />;
 export const MessageIcon = () => <MdWarning {...iconProps} className="w-6 h-6 text-orange-500" />;
 export const ReturnIcon = () => <MdAssignment {...iconProps} className="w-6 h-6 text-green-600" />;
 export const PrescriptionIcon = () => <MdMedicalServices {...iconProps} className="w-6 h-6 text-red-500" />;
@@ -13,7 +13,7 @@ export const GovernmentIcon = () => <MdAccountBalance {...iconProps} className="
 export const WarrantyIcon = () => <MdShield {...iconProps} className="w-6 h-6 text-purple-600" />;
 
 // Header dropdown icons (smaller)
-export const ContractIconSmall = () => <MdDescription className="w-5 h-5 text-[#3548C9]" />;
+export const ContractIconSmall = () => <MdDescription className="w-5 h-5 text-[#1F2D7F]" />;
 export const MessageIconSmall = () => <MdWarning className="w-5 h-5 text-orange-500" />;
 export const ReturnIconSmall = () => <MdAssignment className="w-5 h-5 text-green-600" />;
 export const PrescriptionIconSmall = () => <MdMedicalServices className="w-5 h-5 text-red-500" />;

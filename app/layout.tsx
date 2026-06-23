@@ -20,7 +20,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   userScalable: true,
-  themeColor: "#3548C9",
+  themeColor: "#1F2D7F",
 };
 
 export const metadata: Metadata = {
@@ -72,8 +72,8 @@ export const metadata: Metadata = {
     canonical: "https://readthedeal.vercel.app",
   },
   icons: {
-    icon: '/header-logo.png',
-    shortcut: '/header-logo.png',
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
     apple: '/header-logo.png',
   },
 };
@@ -98,7 +98,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 
         {/* Favicon */}
-        <link rel="icon" href="/header-logo.png" type="image/png" />
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" />
         <link rel="apple-touch-icon" href="/header-logo.png" />
       </head>
       <body suppressHydrationWarning className="min-h-screen bg-paper text-ink font-sans flex flex-col overflow-x-hidden">

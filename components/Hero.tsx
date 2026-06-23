@@ -19,7 +19,7 @@ export default function Hero() {
                         </div>
 
                         <h1 className="text-[clamp(28px,5vw,52px)] leading-snug font-serif font-bold text-[#211D17] mt-2 md:mt-3">
-                            Any document. Any message.<br /><em className="italic text-[#3548C9]">Finally</em> explained<br />clearly.
+                            Any document. Any message.<br /><em className="italic text-[#1F2D7F]">Finally</em> explained<br />clearly.
                         </h1>
 
                         <p className="text-sm md:text-base text-[#615A4C] max-w-sm mt-2 md:mt-3 leading-relaxed">
@@ -27,7 +27,7 @@ export default function Hero() {
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-2 md:gap-3 mt-4 md:mt-5 flex-wrap">
-                            <a href="#trythese" className="bg-[#3548C9] text-white! px-4 md:px-5 py-2 md:py-2.5 rounded-[11px] font-semibold text-sm hover:bg-[#222F95] transition transform hover:-translate-y-0.5 shadow-lg text-center">
+                            <a href="#trythese" className="bg-[#1F2D7F] text-white! px-4 md:px-5 py-2 md:py-2.5 rounded-[11px] font-semibold text-sm hover:bg-[#152047] transition transform hover:-translate-y-0.5 shadow-lg text-center">
                                 Try it free — no signup
                             </a>
                             <a href="#examples" className="bg-transparent text-[#211D17] border border-[#E4DAC2] px-4 md:px-5 py-2 md:py-2.5 rounded-[11px] font-semibold text-sm hover:border-[#211D17] transition text-center">

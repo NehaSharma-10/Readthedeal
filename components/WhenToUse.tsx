@@ -94,7 +94,7 @@ export default function WhenToUse() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-2.5 rounded-lg font-semibold text-sm whitespace-nowrap transition flex-shrink-0 ${activeTab === tab.id
-                ? 'bg-[#3548C9] text-white shadow-md'
+                ? 'bg-[#1F2D7F] text-white shadow-md'
                 : 'bg-paper-deep text-ink hover:bg-white border border-paper-line opacity-60 hover:opacity-100'
                 }`}
             >
