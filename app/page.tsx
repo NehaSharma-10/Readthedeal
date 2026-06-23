@@ -1,17 +1,20 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import Story from '@/components/Story';
 import WhatsIt from '@/components/WhatsIt';
-import HowItWorks from '@/components/HowItWorks';
-import Examples from '@/components/Examples';
-import WhenToUse from '@/components/WhenToUse';
-import WhyNotChatGPT from '@/components/WhyNotChatGPT';
-import Playground from '@/components/Playground';
-import Trust from '@/components/Trust';
-import FAQ from '@/components/FAQ';
-import FinalCTA from '@/components/FinalCTA';
+
+// Lazy load components below the fold
+const HowItWorks = dynamic(() => import('@/components/HowItWorks'), { loading: () => <div className="py-28" /> });
+const Examples = dynamic(() => import('@/components/Examples'), { loading: () => <div className="py-20" /> });
+const WhenToUse = dynamic(() => import('@/components/WhenToUse'), { loading: () => <div className="py-20" /> });
+const WhyNotChatGPT = dynamic(() => import('@/components/WhyNotChatGPT'), { loading: () => <div className="py-20" /> });
+const Playground = dynamic(() => import('@/components/Playground'), { loading: () => <div className="py-20" /> });
+const Trust = dynamic(() => import('@/components/Trust'), { loading: () => <div className="py-16" /> });
+const FAQ = dynamic(() => import('@/components/FAQ'), { loading: () => <div className="py-20" /> });
+const FinalCTA = dynamic(() => import('@/components/FinalCTA'), { loading: () => <div className="py-20" /> });
 
 const jsonLd = {
   '@context': 'https://schema.org',

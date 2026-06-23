@@ -25,7 +25,7 @@ export async function analyzeContractWithGemini(contractText: string): Promise<{
     }
 
     const client = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-    const model = client.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const model = client.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
     const prompt = `You are a contract reviewer. Analyze this contract BRIEFLY and return ONLY a JSON response with these fields. Be concise - extract only the most important points:
 
@@ -82,6 +82,6 @@ ${contractText}`;
         keyPhrases: analysis.keyPhrases,
         contractLength: contractText.length,
         tokensUsed: estimatedInputTokens + estimatedOutputTokens,
-        provider: 'gemini-2.5-flash'
+        provider: 'gemini-2.0-flash'
     };
 }

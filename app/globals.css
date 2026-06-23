@@ -43,8 +43,8 @@ body {
 img {
   max-width: 100%;
   display: block;
-  animation: fadeInScale 1.2s ease-in-out;
-  transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+  animation: fadeInScale 0.6s ease-in-out;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
   content-visibility: auto;
 }
 

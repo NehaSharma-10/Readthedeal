@@ -1,28 +1,37 @@
 # Read the Deal
 
-A free, fast contract and message analyzer that helps you understand agreements before you sign.
+A free, fast document analyzer that helps you understand contracts, prescriptions, government notices, warranties, return policies, meeting notes, and suspicious messages before you make decisions.
 
 ## 🚀 Features
 
-- **Contract Analysis**: Upload any contract, lease, or agreement to get a plain-English breakdown
-- **Scam Detection**: Analyze suspicious messages and emails for phishing and scam indicators
-- **Hidden Fees Finder**: Spot cancellation traps, deadlines, and unfavorable terms
+- **7 Analysis Modes**: 
+  - Contract Analysis - Spot hidden clauses and unfavorable terms
+  - Message Detection - Identify phishing and scam indicators
+  - Return Policy Breakdown - Understand conditions and timeframes
+  - Prescription Translation - Plain-English dosage and warnings
+  - Meeting Notes Extraction - Clear action items and decisions
+  - Government Form Clarification - Deadlines and requirements explained
+  - Warranty Coverage - Know what's actually covered
+- **Auto-Detection**: Not sure what document it is? We'll figure it out
+- **Plain English**: No jargon, no gotchas, just what matters
 - **No Signup Required**: Try it free instantly without creating an account
 - **Fast & Secure**: Results in seconds, documents never stored
 
 ## 📊 Tech Stack
 
-- **Framework**: Next.js 16 (React 19)
+- **Framework**: Next.js 16 (React 19, Turbopack)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
-- **Deployment**: Vercel
-- **AI**: Claude & Gemini APIs
+- **AI Models**: Google Generative AI (Gemini 2.5 Flash)
+- **Deployment**: Vercel-ready
+- **Features**: Rate limiting, caching, quota management
 
 ## 🛠️ Setup
 
 ### Prerequisites
 - Node.js 18+
 - npm or yarn
+- Google Generative AI API key
 
 ### Installation
 
@@ -36,7 +45,7 @@ npm install
 
 # Setup environment
 cp .env.local.example .env.local
-# Add your API keys to .env.local
+# Add your Google API key to .env.local
 ```
 
 ### Development
@@ -59,20 +68,42 @@ npm run start
 gotchaa/
 ├── app/
 │   ├── api/
-│   │   └── analyze-contract/    # API endpoints
-│   ├── layout.tsx               # Root layout with SEO
-│   ├── globals.css              # Global styles
-│   └── page.tsx                 # Homepage
-├── components/                  # React components
-│   ├── Hero.tsx                 # Hero section
-│   ├── Playground.tsx           # Analysis interface
-│   ├── FAQ.tsx                  # FAQ section
-│   └── ...                      # Other sections
+│   │   └── analyze-contract/           # API endpoints
+│   │       ├── route.ts                # Main analysis endpoint
+│   │       ├── cache.ts                # Result caching
+│   │       ├── rate-limiter.ts         # Quota management
+│   │       ├── message.ts              # Message analysis helper
+│   │       ├── claude.ts               # Claude API integration
+│   │       └── gemini.ts               # Gemini API integration
+│   ├── layout.tsx                      # Root layout with SEO
+│   ├── globals.css                     # Global styles & colors
+│   └── page.tsx                        # Homepage
+├── components/                         # React components
+│   ├── Hero.tsx                        # Hero section
+│   ├── Story.tsx                       # Problem narrative
+│   ├── Playground.tsx                  # Analysis interface (7 modes)
+│   ├── Examples.tsx                    # Use case examples
+│   ├── HowItWorks.tsx                  # Process explanation
+│   ├── WhenToUse.tsx                   # Scenarios per mode
+│   ├── FAQ.tsx                         # FAQ section
+│   └── ...                             # Other sections
+├── lib/
+│   ├── analyzers/                      # Analysis modules
+│   │   ├── contract.ts                 # Contract analyzer
+│   │   ├── message.ts                  # Message analyzer
+│   │   ├── return-policy.ts            # Return policy analyzer
+│   │   ├── prescription.ts             # Prescription analyzer
+│   │   ├── meeting-notes.ts            # Meeting notes analyzer
+│   │   ├── government-form.ts          # Government form analyzer
+│   │   ├── warranty.ts                 # Warranty analyzer
+│   │   ├── index.ts                    # Analyzer routing
+│   │   └── gemini-utils.ts             # Shared Gemini utilities
+│   └── icons.tsx                       # Icon components
 ├── public/
-│   ├── sitemap.xml              # SEO sitemap
-│   ├── robots.txt               # Crawler directives
-│   └── images/                  # Images
-└── next.config.ts               # Next.js configuration
+│   ├── sitemap.xml                     # SEO sitemap
+│   ├── robots.txt                      # Crawler directives
+│   └── images/                         # Hero & story images
+└── next.config.ts                      # Next.js configuration
 ```
 
 ## 🔧 Configuration
@@ -80,12 +111,8 @@ gotchaa/
 ### Environment Variables
 
 ```env
-# API Keys
-NEXT_PUBLIC_CLAUDE_API_KEY=your_key_here
-NEXT_PUBLIC_GEMINI_API_KEY=your_key_here
-
-# Site
-NEXT_PUBLIC_SITE_URL=https://readthedeal.com
+# Required - Google Generative AI API key
+GOOGLE_API_KEY=your_key_here
 ```
 
 ### Customization
@@ -93,60 +120,61 @@ NEXT_PUBLIC_SITE_URL=https://readthedeal.com
 - **Colors**: Update `app/globals.css` color variables
 - **Content**: Edit component files in `components/`
 - **Metadata**: Update `app/layout.tsx` metadata
-- **Images**: Add images to `public/` folder
+- **Analysis Prompts**: Modify `lib/analyzers/*.ts` files
 
-## 📈 Performance
+## 📈 Features & Capabilities
 
-- **Lighthouse Score**: 90+
-- **Core Web Vitals**: All green ✅
-- **Mobile**: Fully responsive
-- **SEO**: Optimized for search engines
+### Analysis Modes
 
-## 📚 Documentation
+| Mode | What It Does | Best For |
+|------|-------------|----------|
+| **Contract** | Highlights obligations, costs, deadlines, risks | Leases, memberships, agreements |
+| **Message** | Detects phishing, scams, credential requests | Emails, texts, suspicious alerts |
+| **Return Policy** | Breaks down windows, fees, conditions | Online shopping, returns |
+| **Prescription** | Explains dosage, interactions, warnings | Medical labels, medication info |
+| **Meeting Notes** | Extracts decisions, action items, owners | Raw notes, transcripts |
+| **Government** | Clarifies requirements, deadlines, consequences | Tax forms, notices, permits |
+| **Warranty** | Shows coverage, exclusions, claim process | Product warranties, guarantees |
 
-- `README.md` - This file
-- `OPTIMIZATION_README.md` - SEO & Performance guide
-- `DEPLOYMENT_READY.md` - Deployment guide
-- `RESPONSIVENESS_AUDIT.md` - Mobile compatibility
+### Auto-Detection
 
-## 🚀 Deployment
+When user selects "Not sure", the tool:
+1. Classifies the document type automatically
+2. Routes to appropriate analyzer
+3. Displays "Detected as: [type]" above results
 
-### Vercel (Recommended)
+### Smart Caching
 
-```bash
-# Push to GitHub
-git push origin main
+- Results cached per document (24-hour expiry)
+- Reduces API calls and cost
+- Instant results for duplicates
 
-# Deploy on Vercel
-# 1. Go to https://vercel.com
-# 2. Import repository
-# 3. Deploy (automatic)
-```
+### Rate Limiting
 
-### Troubleshooting
+- Free tier: 10 analyses per day per user
+- Quota resets daily at UTC midnight
+- User identifier via IP + User-Agent
 
-**Issue**: Slow performance?
-→ Check Lighthouse audit in DevTools
+## 🚀 Performance
 
-**Issue**: Not indexed in Google?
-→ Submit sitemap to Google Search Console
-
-**Issue**: Environment variables not working?
-→ Verify variables in Vercel Project Settings
+- **Build Time**: ~8 seconds (Turbopack)
+- **Page Load**: <2 seconds
+- **API Response**: <5 seconds per analysis
+- **Lighthouse**: 90+ score
 
 ## 🔒 Security
 
 - ✅ HTTPS enforced
-- ✅ Security headers configured
-- ✅ No secrets in code
-- ✅ API keys in environment variables
-- ✅ Rate limiting on API endpoints
+- ✅ Environment variables for secrets
+- ✅ Rate limiting prevents abuse
+- ✅ No document storage
+- ✅ Cache cleared daily
 
 ## 📞 Support
 
 - **Issues**: GitHub Issues
 - **Questions**: Email support
-- **Docs**: See documentation files
+- **Docs**: See README and project files
 
 ## 📄 License
 
@@ -155,19 +183,21 @@ MIT License - feel free to use for personal or commercial projects
 ## 🎯 Roadmap
 
 - [ ] User accounts & history
-- [ ] Batch document processing
+- [ ] Batch processing
 - [ ] Mobile app
 - [ ] Browser extension
 - [ ] API for developers
-- [ ] Premium tier
+- [ ] Premium tier with higher limits
 
-## ✅ Status
+## ✅ Current Status
 
 **Production Ready** ✅
-- SEO optimized
-- Performance optimized
+- All 7 modes fully functional
+- Auto-detection working
+- Rate limiting implemented
+- Caching optimized
 - Mobile responsive
-- Security hardened
+- SEO optimized
 
 ---
 

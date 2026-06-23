@@ -14,20 +14,21 @@ const analysisCache = new Map<string, CachedAnalysis>();
 const CACHE_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
- * Generate a hash of the contract text
+ * Generate a hash of the contract text and mode combined
  */
-export function generateContractHash(contractText: string): string {
+export function generateContractHash(contractText: string, mode?: string): string {
+    const combined = `${contractText.trim().toLowerCase()}|${mode || 'default'}`;
     return crypto
         .createHash('sha256')
-        .update(contractText.trim().toLowerCase())
+        .update(combined)
         .digest('hex');
 }
 
 /**
  * Get cached analysis result
  */
-export function getCachedAnalysis(contractText: string): any | null {
-    const hash = generateContractHash(contractText);
+export function getCachedAnalysis(contractText: string, mode?: string): any | null {
+    const hash = generateContractHash(contractText, mode);
     const cached = analysisCache.get(hash);
 
     if (!cached) {
@@ -40,15 +41,15 @@ export function getCachedAnalysis(contractText: string): any | null {
         return null;
     }
 
-    console.log(`[Cache HIT] Contract analyzed ${Math.round((Date.now() - cached.timestamp) / 1000)}s ago`);
+    console.log(`[Cache HIT] Analysis analyzed ${Math.round((Date.now() - cached.timestamp) / 1000)}s ago`);
     return cached.result;
 }
 
 /**
  * Store analysis result in cache
  */
-export function cacheAnalysis(contractText: string, result: any): void {
-    const hash = generateContractHash(contractText);
+export function cacheAnalysis(contractText: string, result: any, mode?: string): void {
+    const hash = generateContractHash(contractText, mode);
     const now = Date.now();
 
     analysisCache.set(hash, {

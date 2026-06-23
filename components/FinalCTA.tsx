@@ -6,8 +6,8 @@ export default function FinalCTA() {
             <div className="max-w-6xl mx-auto">
                 <div className="bg-gradient-to-b from-[#020000] to-[#000000] text-[#FAF6EC] rounded-[28px] px-6 sm:px-10 md:px-12.5 py-12 md:py-16 text-center shadow-xl">
                     <h2 className="text-[clamp(28px,5vw,48px)] leading-tight font-serif font-bold text-[#FAF6EC] mb-4">
-                        The next contract you sign,<br />
-                        read it in <span className="relative inline-block px-0.5 py-0">plain English<span className="absolute inset-x-0 bottom-1/4 h-3 bg-[#FFD23F] -z-10 rounded-sm opacity-92" /></span> first.
+                        Stop guessing what it means.<br />
+                        <span className="relative inline-block px-0.5 py-0">Just paste it.<span className="absolute inset-x-0 bottom-1/4 h-3 bg-[#FFD23F] -z-10 rounded-sm opacity-92" /></span>
                     </h2>
 
                     <p className="text-base md:text-lg text-[#C9C4B6] mt-3 md:mt-3.5">

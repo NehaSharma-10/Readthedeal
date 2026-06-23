@@ -11,7 +11,7 @@ export default function WhyNotChatGPT() {
 
                 <div className="max-w-2xl mx-0 mt-5 border-l-[3px] border-[#FFD23F] pl-6">
                     <p className="text-base text-[#615A4C] m-0">
-                        You could paste a contract into any general-purpose AI and ask for a summary. But this tool is optimized specifically for contracts — it hunts every time for the things that actually cost you: cancellation friction, auto-renewal traps, hidden fees, liability clauses, notice periods. Built for speed, too — use it in the moment you're about to sign, not as a research project later.
+                        You could paste anything into ChatGPT and ask for help. But this tool is built specifically for the documents that matter most — contracts, prescriptions, government forms, warranties, return policies, messages, and meeting notes. It knows exactly what to look for in each: hidden fees and auto-renewals in contracts, warnings and dosage in prescriptions, deadlines and consequences in government forms, scam indicators in messages. Built for speed — use it the moment you need clarity, not as a research project later.
                     </p>
                 </div>
             </div>

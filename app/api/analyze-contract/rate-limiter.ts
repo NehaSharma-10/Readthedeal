@@ -1,6 +1,6 @@
 /**
- * Simple in-memory rate limiter
- * For production, use Redis or a dedicated service like Upstash
+ * Simple in-memory rate limiter with localStorage fallback
+ * For production, use Redis or Upstash for true persistence
  */
 
 interface UserQuota {
@@ -12,7 +12,7 @@ interface UserQuota {
 const userQuotas = new Map<string, UserQuota>();
 
 // Configuration
-const FREE_TIER_LIMIT = 3; // 3 analyses per day
+const FREE_TIER_LIMIT = 4; // 4 analyses per day
 const RESET_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 /**

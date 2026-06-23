@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,12 +37,12 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    url: "https://readthedeal.com",
+    url: "https://readthedeal.vercel.app",
     title: "Read the Deal - Understand Contracts Before You Sign",
     description: "Free contract and message analyzer. Spot hidden fees, cancellation traps, and scam indicators in seconds.",
     images: [
       {
-        url: "https://readthedeal.com/hero-1.png",
+        url: "https://readthedeal.vercel.app/hero-1.png",
         width: 1200,
         height: 630,
         alt: "Read the Deal - Contract Analysis",
@@ -54,7 +55,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Read the Deal - Understand Contracts Before You Sign",
     description: "Free contract analysis. Spot hidden fees and scam indicators instantly.",
-    images: ["https://readthedeal.com/hero-1.png"],
+    images: ["https://readthedeal.vercel.app/hero-1.png"],
   },
   robots: {
     index: true,
@@ -68,11 +69,12 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://readthedeal.com",
+    canonical: "https://readthedeal.vercel.app",
   },
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
+    icon: '/header-logo.png',
+    shortcut: '/header-logo.png',
+    apple: '/header-logo.png',
   },
 };
 
@@ -95,14 +97,12 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 
-        {/* DNS Prefetch */}
-        <link rel="dns-prefetch" href="https://cdn.example.com" />
-
         {/* Favicon */}
-        <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-        <link rel="apple-touch-icon" href="/favicon.ico" />
+        <link rel="icon" href="/header-logo.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/header-logo.png" />
       </head>
       <body suppressHydrationWarning className="min-h-screen bg-paper text-ink font-sans flex flex-col overflow-x-hidden">
+        <Analytics />
         {children}
       </body>
     </html>

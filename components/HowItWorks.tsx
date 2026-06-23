@@ -38,14 +38,15 @@ export default function HowItWorks() {
                     <h2 className="text-[clamp(40px,6vw,56px)] leading-tight font-serif font-bold text-ink mb-4">
                         Three steps. About a minute.
                     </h2>
+                    <p className="text-ink-soft text-base max-w-lg">Get your document analyzed in seconds with our simple three-step process.</p>
                 </div>
 
                 {/* Desktop: 3-column grid layout */}
-                <div className="hidden md:grid grid-cols-3 gap-8">
+                <div className="hidden md:grid grid-cols-3 gap-10">
                     {steps.map((step) => (
-                        <div key={step.num} className="flex flex-col">
+                        <div key={step.num} className="flex flex-col items-center text-center">
                             {/* Image */}
-                            <div className="relative w-full aspect-square bg-paper-deep rounded-xl overflow-hidden mb-6 border border-paper-line hover:shadow-md transition-shadow">
+                            <div className="relative w-60 h-60 aspect-square bg-paper-deep rounded-xl overflow-hidden mb-8 border border-paper-line hover:shadow-md transition-shadow">
                                 <Image
                                     src={step.image}
                                     alt={step.imageAlt}
@@ -57,15 +58,15 @@ export default function HowItWorks() {
                             </div>
 
                             {/* Content */}
-                            <div className="flex items-start gap-4 mb-3">
-                                <div className="w-12 h-12 rounded-full bg-indigo flex items-center justify-center font-serif font-bold text-xl text-white flex-shrink-0 shadow-sm">
+                            <div className="flex flex-col items-center mb-3">
+                                <div className="w-12 h-12 rounded-full bg-indigo flex items-center justify-center font-serif font-bold text-xl text-white shrink-0 shadow-sm mb-3">
                                     {step.num}
                                 </div>
-                                <h3 className="text-lg font-serif font-bold text-ink pt-1">
+                                <h3 className="text-lg font-serif font-bold text-ink">
                                     {step.title}
                                 </h3>
                             </div>
-                            <p className="text-sm text-ink-soft leading-relaxed">
+                            <p className="text-sm text-ink-soft leading-relaxed px-4">
                                 {step.desc}
                             </p>
                         </div>
@@ -73,11 +74,11 @@ export default function HowItWorks() {
                 </div>
 
                 {/* Mobile: Vertical stack */}
-                <div className="md:hidden space-y-12">
+                <div className="md:hidden space-y-10">
                     {steps.map((step) => (
                         <div key={step.num} className="flex flex-col gap-4">
                             {/* Image - Full width */}
-                            <div className="relative w-full aspect-video bg-paper-deep rounded-lg overflow-hidden border border-paper-line">
+                            <div className="relative w-60 h-60 aspect-video bg-paper-deep rounded-lg overflow-hidden border border-paper-line">
                                 <Image
                                     src={step.image}
                                     alt={step.imageAlt}
@@ -90,7 +91,7 @@ export default function HowItWorks() {
 
                             {/* Step indicator + title */}
                             <div className="flex items-start gap-3">
-                                <div className="w-10 h-10 rounded-full bg-indigo text-white flex items-center justify-center font-serif font-bold text-lg flex-shrink-0 mt-0.5">
+                                <div className="w-10 h-10 rounded-full bg-indigo text-white flex items-center justify-center font-serif font-bold text-lg shrink-0 mt-0.5">
                                     {step.num}
                                 </div>
                                 <div className="flex-1">

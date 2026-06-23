@@ -1,19 +1,27 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { callGemini, parseJsonFromResponse, estimateTokens } from '../gemini-utils';
 
-interface LinkAnalysis {
+export interface LinkAnalysis {
     url: string;
     reputation: 'safe' | 'suspicious' | 'dangerous';
     reason: string;
 }
 
-interface MessageAnalysis {
+export interface MessageResult {
     verdict: 'clean' | 'uncertain' | 'scam_likely';
     redFlags: string[];
     reasoning: string;
+    urls: LinkAnalysis[];
+    shortCircuited: boolean;
+    provider: string;
 }
 
 const MIN_WORDS_FOR_ANALYSIS = 8;
-const URGENCY_KEYWORDS = ['verify your account', 'confirm password', 'update payment', 'verify banking', 'unusual activity', 'account suspended', 'click here', 'confirm credentials', 'wire transfer', 'gift card', 'payment failed', 'limited time offer', 'act now', 'claim reward', 'verify identity'];
+const URGENCY_KEYWORDS = [
+    'verify your account', 'confirm password', 'update payment', 'verify banking',
+    'unusual activity', 'account suspended', 'click here', 'confirm credentials',
+    'wire transfer', 'gift card', 'payment failed', 'limited time offer',
+    'act now', 'claim reward', 'verify identity'
+];
 
 function extractUrls(text: string): string[] {
     return text.match(/https?:\/\/[^\s]+|www\.[^\s]+/gi) || [];
@@ -37,18 +45,7 @@ async function checkUrlReputation(url: string): Promise<{ reputation: 'safe' | '
     }
 }
 
-export async function analyzeMessageWithGemini(messageText: string): Promise<{
-    verdict: 'clean' | 'uncertain' | 'scam_likely';
-    redFlags: string[];
-    reasoning: string;
-    urls: LinkAnalysis[];
-    shortCircuited: boolean;
-    provider: string;
-}> {
-    if (!process.env.GOOGLE_API_KEY) {
-        throw new Error('GOOGLE_API_KEY is not set');
-    }
-
+export async function analyzeMessage(messageText: string): Promise<MessageResult> {
     const urlStrings = extractUrls(messageText);
 
     // Short-circuit: don't force a verdict on messages with nothing to evaluate
@@ -62,11 +59,6 @@ export async function analyzeMessageWithGemini(messageText: string): Promise<{
             provider: 'gemini-2.5-flash'
         };
     }
-
-    const client = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-    const model = client.getGenerativeModel({
-        model: 'gemini-2.5-flash'
-    });
 
     const prompt = `You are a financial scam and phishing detector. Analyze the message below ONLY for fraud-related indicators. Return ONLY valid JSON with no other text.
 
@@ -94,44 +86,18 @@ Respond with this JSON format only:
 {
   "verdict": "clean" | "uncertain" | "scam_likely",
   "redFlags": ["flag1", "flag2"],
-  "reasoning": "explanation"
+  "reasoning": "1-2 sentence explanation"
 }
+
+IMPORTANT: Keep reasoning to 1-2 short sentences max (25 words or less).
 
 Message:
 """
 ${messageText}
 """`;
 
-    const result = await model.generateContent(prompt);
-    const responseText = result.response.text();
-
-    if (!responseText) {
-        throw new Error('No response from Gemini API');
-    }
-
-    console.log('Gemini message analysis response:', responseText);
-
-    let analysis: MessageAnalysis;
-    try {
-        // Extract JSON from response (handles cases where model adds extra text)
-        let jsonMatch = responseText.match(/\{[\s\S]*\}/);
-        if (!jsonMatch) {
-            // Try extracting from markdown code block
-            const codeBlockMatch = responseText.match(/```(?:json)?\s*([\s\S]*?)```/);
-            if (codeBlockMatch) {
-                jsonMatch = codeBlockMatch[1].match(/\{[\s\S]*\}/);
-            }
-        }
-        if (!jsonMatch) {
-            console.error('Failed to find JSON in response:', responseText);
-            throw new Error('Failed to parse message analysis response');
-        }
-        analysis = JSON.parse(jsonMatch[0]);
-        console.log('Parsed message analysis:', analysis);
-    } catch (error) {
-        console.error('Failed to parse message analysis response:', responseText, error);
-        throw new Error('Failed to parse message analysis response');
-    }
+    const responseText = await callGemini(prompt);
+    const analysis = parseJsonFromResponse(responseText);
 
     // Check URLs if present
     const linkAnalyses: LinkAnalysis[] = [];
@@ -145,7 +111,9 @@ ${messageText}
     }
 
     return {
-        ...analysis,
+        verdict: analysis.verdict || 'clean',
+        redFlags: analysis.redFlags || [],
+        reasoning: analysis.reasoning || '',
         urls: linkAnalyses,
         shortCircuited: false,
         provider: 'gemini-2.5-flash'

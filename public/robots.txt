@@ -1,23 +1,11 @@
-# Read the Deal - robots.txt
-# Allow all bots to crawl
-
+https://readthedeal.vercel.app/# Read the Deal - robots.txt
 User-agent: *
 Allow: /
 
-# Specific rules for search engines
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-# Disallow admin and private paths
+# Disallow private paths
 Disallow: /admin/
 Disallow: /.next/
 Disallow: /api/
 
-# Sitemap location
-Sitemap: https://readthedeal.com/sitemap.xml
-
-# Crawl delay (optional - adjust as needed)
-Crawl-delay: 1
+# Sitemap
+Sitemap: https://readthedeal.vercel.app/sitemap.xml
