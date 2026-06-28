@@ -1,61 +1,71 @@
 import { callGemini, parseJsonFromResponse, estimateTokens } from '../gemini-utils';
 
 export interface ActionItem {
-    task: string;
-    owner: string;
-    deadline: string;
-    priority: 'high' | 'medium' | 'low';
+  task: string;
+  owner: string;
+  deadline: string;
+  priority: 'high' | 'medium' | 'low';
 }
 
 export interface MeetingNotesResult {
-    summary: string;
-    decisions: string[];
-    actionItems: ActionItem[];
-    openQuestions: string[];
-    nextMeeting: string;
-    keyPoints: string[];
-    provider: string;
+  summary: string;
+  decisions: string[];
+  actionItems: ActionItem[];
+  openQuestions: string[];
+  nextMeeting: string;
+  keyPoints: string[];
+  provider: string;
 }
 
 export async function analyzeMeetingNotes(notesText: string): Promise<MeetingNotesResult> {
-    const prompt = `You are a meeting notes analyzer. Analyze these meeting notes and return ONLY valid JSON:
+  const prompt = `You are a meeting notes, transcripts, and discussion analyzer. Analyze these notes and extract what's actionable. Return ONLY valid JSON:
 
 {
-  "summary": "Brief summary of the meeting",
-  "decisions": ["Decision 1", "Decision 2"],
+  "summary": "1 sentence: what this meeting was about and key outcome",
+  "decisions": ["Decision 1: what was decided", "Decision 2", "Decision 3 if critical"],
   "actionItems": [
     {
-      "task": "Action item description",
-      "owner": "Name or 'Unassigned'",
-      "deadline": "Date or empty string",
-      "priority": "high" | "medium" | "low"
+      "task": "Clear action item description",
+      "owner": "Person responsible or 'Unassigned'",
+      "deadline": "Specific date/time or 'Not specified'",
+      "priority": "high | medium | low"
     }
   ],
-  "openQuestions": ["Question 1", "Question 2"],
-  "nextMeeting": "Date/time or empty string",
-  "keyPoints": ["Key point 1", "Key point 2"]
+  "openQuestions": ["Unresolved question 1", "Question 2", "Question 3 if significant"],
+  "nextMeeting": "Scheduled date/time or 'Not scheduled'",
+  "keyPoints": ["Important discussion point 1", "Important point 2", "Point 3 if relevant"]
 }
 
-Return ONLY valid JSON, no other text.
+CRITICAL RULES:
+- Extract 2-3 items for decisions, openQuestions, and keyPoints
+- Extract all actionItems even if many - include owner and deadline for each
+- summary: focus on OUTCOME not just topic discussed
+- decisions: be specific about what was decided and who decided
+- actionItems: MUST have owner and deadline (mark Unassigned/Not specified if missing), include priority
+- Prioritize actionItems by urgency and impact
+- openQuestions: list ALL unresolved topics that need follow-up
+- keyPoints: highlight important discussion points and context
+- Include all decisions made during meeting
+- Return ONLY valid JSON, no other text
 
-Meeting notes to analyze:
+Meeting Notes to analyze:
 ${notesText}`;
 
-    const responseText = await callGemini(prompt);
-    const analysis = parseJsonFromResponse(responseText);
+  const responseText = await callGemini(prompt);
+  const analysis = parseJsonFromResponse(responseText);
 
-    return {
-        summary: analysis.summary || '',
-        decisions: analysis.decisions || [],
-        actionItems: (analysis.actionItems || []).map((item: any) => ({
-            task: item.task || '',
-            owner: item.owner || 'Unassigned',
-            deadline: item.deadline || '',
-            priority: item.priority || 'medium'
-        })),
-        openQuestions: analysis.openQuestions || [],
-        nextMeeting: analysis.nextMeeting || '',
-        keyPoints: analysis.keyPoints || [],
-        provider: 'gemini-2.5-flash'
-    };
+  return {
+    summary: analysis.summary || '',
+    decisions: analysis.decisions || [],
+    actionItems: (analysis.actionItems || []).map((item: any) => ({
+      task: item.task || '',
+      owner: item.owner || 'Unassigned',
+      deadline: item.deadline || 'Not specified',
+      priority: item.priority || 'medium'
+    })),
+    openQuestions: analysis.openQuestions || [],
+    nextMeeting: analysis.nextMeeting || 'Not scheduled',
+    keyPoints: analysis.keyPoints || [],
+    provider: 'gemini-2.5-flash'
+  };
 }

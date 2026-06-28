@@ -53,21 +53,33 @@ export async function POST(request: Request) {
         // Classify document to detect actual type
         let detectedType: string = analysisMode as string;
         try {
-            const classifyPrompt = `You are a document classifier. Read the text below and identify what type of document it is.
+            const classifyPrompt = `You are a universal document classifier. Read the text and identify what type of document it is. Be precise.
 
-IMPORTANT GUIDELINES:
-- Privacy Policies, Terms of Service, Terms & Conditions → classify as "contract"
-- Government forms, tax forms, DMV documents, permits → classify as "government"
-- Lease agreements, rental agreements, membership agreements → classify as "contract"
-- Text messages, emails, DMs, suspicious communications → classify as "message"
-- Store return policies, refund policies → classify as "returns"
-- Medicine labels, prescription instructions → classify as "prescription"
-- Meeting transcripts, notes from meetings → classify as "meeting"
-- Product warranties, coverage documents → classify as "warranty"
+If the document is a SHORT message (text, email, SMS, WhatsApp, chat, DM, social media message):
+- Return "message" if it's a single message/communication
+- Return "message" for potential scams, phishing, or suspicious messages
 
-Return ONLY one of these exact values and nothing else: contract | message | returns | prescription | meeting | government | warranty
+If the document contains MEDICAL/HEALTHCARE information (prescriptions, medical reports, lab results, discharge summaries, vaccination records, health records):
+- Return "prescription"
 
-Text: <<<START>>> ${textToAnalyze} <<<END>>>`;
+If the document is GOVERNMENT-RELATED (government forms, tax forms, IRS forms, passport applications, visa documents, driving licenses, DMV forms, property registration, permits, official government letters):
+- Return "government"
+
+If the document is about MEETING/DISCUSSION (meeting notes, transcripts, conference minutes, discussion records, team updates, event notes, business notes):
+- Return "meeting"
+
+If the document is about WARRANTIES or RETURNS (warranty cards, return policies, refund policies, exchange policies, product guarantees, service guarantees, coverage documents):
+- Return "returns"
+
+If the document is ANY OTHER TYPE (contracts, agreements, policies, terms & conditions, privacy policies, NDAs, employment agreements, lease agreements, service agreements, subscription agreements, user agreements, loan agreements, credit card agreements, insurance policies, purchase agreements, purchase orders, quotations, business proposals, property deeds, rent receipts, bank statements, credit card statements, investment reports, salary slips, financial reports, invoices, bills, receipts, travel insurance, hotel bookings, flight itineraries, visa letters, home inspection reports, real estate documents, and any other legal/formal documents):
+- Return "contract"
+
+Return ONLY one exact value: contract | message | returns | prescription | meeting | government | warranty
+
+Document text:
+<<<START>>>
+${textToAnalyze}
+<<<END>>>`;
 
             const classificationResult = await callGemini(classifyPrompt);
             detectedType = classificationResult.trim().toLowerCase();

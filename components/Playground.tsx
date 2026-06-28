@@ -314,8 +314,33 @@ export default function Playground() {
                                     </div>
                                 )}
 
-                                {/* Obligations */}
-                                {result.obligations && result.obligations.length > 0 && (
+                                {/* Obligations - Separated by Party */}
+                                {result.obligations && (result.obligations.serviceProvider?.length > 0 || result.obligations.client?.length > 0) && (
+                                    <div>
+                                        <h3 className="font-semibold mb-2 text-ink text-xs">Obligations</h3>
+
+                                        {result.obligations.serviceProvider && result.obligations.serviceProvider.length > 0 && (
+                                            <div className="mb-2">
+                                                <p className="text-xs font-semibold text-indigo mb-1">Service Provider Must:</p>
+                                                <ul className="text-xs text-ink-soft space-y-0.5 pl-2">
+                                                    {result.obligations.serviceProvider.map((item: string, i: number) => <li key={i}>• {item}</li>)}
+                                                </ul>
+                                            </div>
+                                        )}
+
+                                        {result.obligations.client && result.obligations.client.length > 0 && (
+                                            <div>
+                                                <p className="text-xs font-semibold text-indigo mb-1">Client Must:</p>
+                                                <ul className="text-xs text-ink-soft space-y-0.5 pl-2">
+                                                    {result.obligations.client.map((item: string, i: number) => <li key={i}>• {item}</li>)}
+                                                </ul>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Obligations - Fallback for arrays */}
+                                {result.obligations && Array.isArray(result.obligations) && result.obligations.length > 0 && (
                                     <div>
                                         <h3 className="font-semibold mb-1 text-ink text-xs">Obligations</h3>
                                         <ul className="text-xs text-ink-soft space-y-0.5">
@@ -460,8 +485,29 @@ export default function Playground() {
                                     </div>
                                 )}
 
-                                {/* Deadlines */}
+                                {/* Deadlines - Structured Format */}
                                 {result.deadlines && result.deadlines.length > 0 && (
+                                    <div>
+                                        <h3 className="font-semibold mb-2 text-ink text-xs">⏰ Key Dates & Deadlines</h3>
+                                        <div className="space-y-1.5">
+                                            {result.deadlines.map((item: any, i: number) => (
+                                                <div key={i} className="p-2 bg-yellow-50 rounded border-l-2 border-yellow-400">
+                                                    {typeof item === 'string' ? (
+                                                        <p className="text-xs text-ink-soft">{item}</p>
+                                                    ) : (
+                                                        <>
+                                                            <p className="text-xs font-semibold text-ink">{item.label}</p>
+                                                            <p className="text-xs text-ink-soft">{item.value}</p>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Deadlines - Fallback */}
+                                {result.deadlines && result.deadlines.length === 0 && !result.deadlines[0]?.label && (
                                     <div>
                                         <h3 className="font-semibold mb-1 text-ink">Deadlines</h3>
                                         <div className="space-y-2 text-xs">
@@ -541,22 +587,65 @@ export default function Playground() {
                                 {/* Risks */}
                                 {result.risks && result.risks.length > 0 && (
                                     <div>
-                                        <h3 className="font-semibold mb-1 text-ink text-red-600 text-xs">Risks</h3>
+                                        <h3 className="font-semibold mb-1 text-ink text-red-600 text-xs">⚠️ Risks & Penalties</h3>
                                         <ul className="text-xs text-ink-soft space-y-0.5">
                                             {result.risks.map((item: string, i: number) => <li key={i}>• {item}</li>)}
                                         </ul>
                                     </div>
                                 )}
 
-                                {/* Helpful Tips */}
-                                {result.helpfulTips && result.helpfulTips.length > 0 && (
+                                {/* Assessment - New Section */}
+                                {result.assessment && (
+                                    <div className="mt-3 p-3 rounded-lg border-2" style={{
+                                        borderColor: result.assessment.riskLevel === 'high' ? '#dc2626' : result.assessment.riskLevel === 'medium' ? '#ea580c' : '#16a34a',
+                                        backgroundColor: result.assessment.riskLevel === 'high' ? '#fee2e2' : result.assessment.riskLevel === 'medium' ? '#fef3c7' : '#dcfce7'
+                                    }}>
+                                        <div className="flex items-center justify-between mb-2">
+                                            <h3 className="font-semibold text-sm text-ink">📊 Overall Assessment</h3>
+                                            <span className="text-xs font-semibold" style={{
+                                                color: result.assessment.riskLevel === 'high' ? '#7f1d1d' : result.assessment.riskLevel === 'medium' ? '#92400e' : '#15803d'
+                                            }}>
+                                                {result.assessment.riskLevel === 'high' ? '🔴 High Risk' : result.assessment.riskLevel === 'medium' ? '🟡 Medium Risk' : '🟢 Low Risk'}
+                                            </span>
+                                        </div>
+
+                                        <p className="text-xs text-ink-soft mb-2">Confidence: <strong>{result.assessment.confidence}%</strong></p>
+
+                                        {result.assessment.keyConcerns && result.assessment.keyConcerns.length > 0 && (
+                                            <div className="mb-2">
+                                                <p className="text-xs font-semibold text-ink mb-1">Key Concerns:</p>
+                                                <ul className="text-xs space-y-0.5 pl-2">
+                                                    {result.assessment.keyConcerns.map((concern: string, i: number) => (
+                                                        <li key={i}>• {concern}</li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+
+                                        {result.assessment.recommendedReview && result.assessment.recommendedReview.length > 0 && (
+                                            <div>
+                                                <p className="text-xs font-semibold text-ink mb-1">Before Signing, Review:</p>
+                                                <ul className="text-xs space-y-0.5 pl-2">
+                                                    {result.assessment.recommendedReview.map((item: string, i: number) => (
+                                                        <li key={i}>✓ {item}</li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Costs */}
+                                {result.costs && result.costs.length > 0 && (
                                     <div>
-                                        <h3 className="font-semibold mb-1 text-ink">💡 Helpful Tips</h3>
-                                        <ul className="text-xs text-ink-soft space-y-1">
-                                            {result.helpfulTips.map((item: string, i: number) => <li key={i}>• {item}</li>)}
+                                        <h3 className="font-semibold mb-1 text-ink text-xs">💰 Costs & Fees</h3>
+                                        <ul className="text-xs text-ink-soft space-y-0.5">
+                                            {result.costs.map((item: string, i: number) => <li key={i}>• {item}</li>)}
                                         </ul>
                                     </div>
                                 )}
+
+
 
                                 {/* Cached Badge */}
                                 {result.cached && (

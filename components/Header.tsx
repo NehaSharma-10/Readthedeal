@@ -29,7 +29,7 @@ export default function Header() {
                 </nav>
 
                 {/* Desktop CTA */}
-                <a href="#trythese" className="hidden md:block bg-[#1a2c9f] text-white! px-7 py-2.5 rounded-[11px] font-medium text-sm hover:bg-[#222F95] transition transform hover:-translate-y-0.5 shadow-lg hover:shadow-xl whitespace-nowrap">
+                <a href="#trythese" className="hidden md:block bg-[#1F2D7F] text-white! px-7 py-2.5 rounded-[11px] font-medium text-sm hover:bg-[#152047] transition transform hover:-translate-y-0.5 shadow-lg hover:shadow-xl whitespace-nowrap">
                     Try it free
                 </a>
 

@@ -18,31 +18,34 @@ export interface GovernmentFormResult {
 }
 
 export async function analyzeGovernmentForm(formText: string): Promise<GovernmentFormResult> {
-  const prompt = `You are a government form analyzer. Analyze this government form or official notice and return ONLY valid JSON:
+  const prompt = `You are a government form and official document analyzer. Analyze this government form, tax form, visa document, permit, or official notice and extract critical information. Return ONLY valid JSON:
 
 {
-  "summary": "What this document is and its purpose",
-  "whatTheyNeedToDo": ["Step 1", "Step 2", "Step 3"],
-  "documentsRequired": ["Document 1", "Document 2"],
+  "summary": "1 sentence: what this form/notice is and its purpose",
+  "whatTheyNeedToDo": ["Action 1: step to complete", "Action 2: next step", "Action 3 if applicable"],
+  "documentsRequired": ["Document 1", "Document 2", "Document 3 if needed"],
   "deadlines": [
     {
       "action": "What needs to be done",
-      "date": "Date or timeframe",
-      "consequence": "What happens if missed"
+      "date": "Deadline date or timeframe",
+      "consequence": "What happens if you miss it"
     }
   ],
-  "fees": ["Fee 1", "Fee 2 or empty array"],
-  "warnings": ["Important warning"],
-  "helpfulTips": ["Tip 1", "Tip 2"]
+  "fees": ["Fee 1", "Fee 2 if applicable"],
+  "governmentWarnings": ["Critical warning 1", "Important note 2"],
+  "helpfulTips": ["Official tip 1", "Pro tip 2"]
 }
 
-IMPORTANT: 
-- whatTheyNeedToDo must be numbered steps
-- Each deadline MUST have a consequence (never blank)
-- Use "Consequence not specified" if not mentioned
+CRITICAL RULES:
+- Extract 2-3 items for whatTheyNeedToDo, documentsRequired, and other fields
+- whatTheyNeedToDo must be NUMBERED clear, actionable steps
+- EVERY deadline MUST include consequence (never blank) - highlight penalties, fines, legal consequences
+- Include all critical deadlines with specific dates
+- Flag missing information or vague instructions
+- Focus on what the user MUST know to comply
 - Return ONLY valid JSON, no other text
 
-Document to analyze:
+Government Document to analyze:
 ${formText}`;
 
   const responseText = await callGemini(prompt);
@@ -58,7 +61,7 @@ ${formText}`;
       consequence: d.consequence || 'Consequence not specified'
     })),
     fees: analysis.fees || [],
-    governmentWarnings: analysis.warnings || analysis.governmentWarnings || [],
+    governmentWarnings: analysis.governmentWarnings || analysis.warnings || [],
     helpfulTips: analysis.helpfulTips || [],
     provider: 'gemini-2.5-flash'
   };
