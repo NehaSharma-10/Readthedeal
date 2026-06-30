@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { FaPaste, FaFileUpload, FaImage } from 'react-icons/fa';
 
 type AnalysisMode = 'contract' | 'message' | 'returns' | 'prescription' | 'meeting' | 'government' | 'warranty' | 'auto';
 
@@ -223,6 +224,50 @@ export default function Playground() {
                         <label className="text-sm font-semibold mb-3 text-ink">
                             Enter text:
                         </label>
+
+                        {/* Input Methods Buttons */}
+                        <div className="flex gap-2 mb-3">
+                            <button
+                                onClick={async () => {
+                                    const text = await navigator.clipboard.readText().catch(() => null);
+                                    if (text) {
+                                        setInputText(text);
+                                    }
+                                }}
+                                disabled={loading}
+                                className="flex items-center gap-2 px-4 py-2 bg-indigo text-white font-semibold rounded-lg hover:bg-indigo-deep disabled:bg-paper-line disabled:text-ink-soft transition-colors text-sm"
+                            >
+                                <FaPaste className="w-4 h-4" />
+                                Paste Text
+                            </button>
+
+                            <div className="relative group">
+                                <button
+                                    disabled
+                                    className="flex items-center gap-2 px-4 py-2 bg-gray-300 text-gray-600 font-semibold rounded-lg cursor-not-allowed text-sm"
+                                >
+                                    <FaFileUpload className="w-4 h-4" />
+                                    Upload
+                                </button>
+                                <div className="absolute bottom-full left-0 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap pointer-events-none group-hover:block hidden">
+                                    Coming soon
+                                </div>
+                            </div>
+
+                            <div className="relative group">
+                                <button
+                                    disabled
+                                    className="flex items-center gap-2 px-4 py-2 bg-gray-300 text-gray-600 font-semibold rounded-lg cursor-not-allowed text-sm"
+                                >
+                                    <FaImage className="w-4 h-4" />
+                                    Photo
+                                </button>
+                                <div className="absolute bottom-full left-0 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap pointer-events-none group-hover:block hidden">
+                                    Coming soon
+                                </div>
+                            </div>
+                        </div>
+
                         <textarea
                             value={inputText}
                             onChange={(e) => setInputText(e.target.value)}
