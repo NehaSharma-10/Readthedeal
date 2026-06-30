@@ -66,24 +66,24 @@ export default function Playground() {
         // Check local quota expiry first
         if (localQuotaExpiry && Date.now() < localQuotaExpiry) {
             if (quotaInfo && quotaInfo.remaining <= 0) {
-                setError(`Daily limit reached. Quota resets in ${quotaInfo.resetsInMinutes} minutes.`);
+                setError(`❌ Daily limit reached. Quota resets in ${quotaInfo.resetsInMinutes} minutes.`);
                 return;
             }
         }
 
         // Validation
         if (!inputText.trim()) {
-            setError('Please paste something first.');
+            setError('❌ Please paste something first.');
             return;
         }
 
         if (inputText.trim().length < 20) {
-            setError('Too short to analyze — paste the full document.');
+            setError('❌ Document too short (${inputText.trim().length} characters). Minimum 20 characters required.');
             return;
         }
 
         if (inputText.trim().length > 100000) {
-            setError('Document too large. Maximum 100,000 characters. You pasted ' + inputText.trim().length + ' characters.');
+            setError(`❌ Document too large (${inputText.trim().length} characters). Maximum is 100,000 characters.`);
             return;
         }
 
@@ -91,12 +91,6 @@ export default function Playground() {
         setError(null);
         setResult(null);
         setDetectedMode(null);
-
-        // Show a message for long texts
-        const textLength = inputText.trim().length;
-        if (textLength > 10000) {
-            setError('Processing large document... This may take up to 90 seconds.');
-        }
 
         try {
             const response = await fetch('/api/analyze-contract', {
@@ -118,7 +112,18 @@ export default function Playground() {
             }
 
             if (!response.ok) {
-                setError(data.error || 'Failed to analyze');
+                // More detailed error messages
+                if (response.status === 429) {
+                    setError(`❌ Daily quota exceeded. ${data.message || 'Please try again tomorrow.'}`);
+                } else if (response.status === 503) {
+                    setError(`⚠️ ${data.error || 'Service temporarily unavailable. Please try again later.'}`);
+                } else if (response.status === 400) {
+                    setError(`❌ ${data.error || 'Invalid input. Please check your document and try again.'}`);
+                } else if (response.status === 500) {
+                    setError(`❌ Server error: ${data.error || 'Something went wrong. Please try again later.'}`);
+                } else {
+                    setError(`❌ ${data.error || 'Failed to analyze. Please try again.'}`);
+                }
                 return;
             }
 
@@ -127,7 +132,8 @@ export default function Playground() {
                 setDetectedMode(data.detectedMode);
             }
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'An error occurred');
+            const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+            setError(`❌ Error: ${errorMsg}`);
         } finally {
             setLoading(false);
         }
