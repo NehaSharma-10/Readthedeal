@@ -1,6 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { callGroq } from './groq-utils';
-import { isQuotaExhausted, recordQuotaError, recordQuotaSuccess, getPrimaryProvider } from './api-quota-monitor';
 
 const MODEL = 'gemini-2.0-flash';
 const TIMEOUT_MS = 90000; // 90 second timeout for long documents
@@ -19,27 +18,16 @@ export async function callGemini(prompt: string): Promise<string> {
         throw new Error('GROQ_API_KEY is not set');
     }
 
-    const primaryProvider = getPrimaryProvider();
     let lastGroqError: string | null = null;
     let lastGeminiError: string | null = null;
 
-    // Try primary provider first
+    // Try Groq first
     try {
-        if (primaryProvider === 'groq') {
-            const result = await callGroq(prompt);
-            recordQuotaSuccess('groq');
-            return result;
-        }
+        const result = await callGroq(prompt);
+        return result;
     } catch (groqError) {
         lastGroqError = groqError instanceof Error ? groqError.message : 'Unknown Groq error';
-
-        // Check if it's a quota exhaustion error
-        if (isQuotaExhausted(lastGroqError)) {
-            recordQuotaError('groq', lastGroqError);
-            console.warn('🔄 [QUOTA] Groq quota exhausted. Switching to Gemini 2.0...');
-        } else {
-            console.warn(`⚠️ [GROQ] Request failed: ${lastGroqError}`);
-        }
+        console.warn(`⚠️ [GROQ] Request failed: ${lastGroqError}`);
     }
 
     // Try Gemini 2.0 as fallback
@@ -58,17 +46,10 @@ export async function callGemini(prompt: string): Promise<string> {
             throw new Error('No response from Gemini API');
         }
 
-        recordQuotaSuccess('gemini');
         return responseText;
     } catch (geminiError) {
         lastGeminiError = geminiError instanceof Error ? geminiError.message : 'Unknown Gemini error';
-
-        if (isQuotaExhausted(lastGeminiError)) {
-            recordQuotaError('gemini', lastGeminiError);
-            console.error('❌ [QUOTA] Both Groq and Gemini quotas exhausted!');
-        } else {
-            console.error(`❌ [GEMINI] Request failed: ${lastGeminiError}`);
-        }
+        console.error(`❌ [GEMINI] Request failed: ${lastGeminiError}`);
 
         // Both providers failed
         throw new Error(

@@ -177,7 +177,7 @@ export default function Playground() {
         <section id="trythese" className="py-20 bg-white text-ink">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="mb-12">
-                    <h2 className="text-[clamp(32px,5vw,52px)] font-serif font-bold mb-3 text-center text-indigo">Try it now</h2>
+                    <h2 className="text-[clamp(32px,5vw,52px)] font-serif font-bold mb-3 text-center text-black">Try it now</h2>
                     <p className="text-center text-ink-soft mb-8 text-sm md:text-base max-w-2xl mx-auto">
                         Paste a contract, prescription, government notice, warranty, return policy, meeting notes, or suspicious message. We'll translate the jargon and show you what actually matters.
                     </p>
