@@ -9,6 +9,7 @@ export interface ActionItem {
 
 export interface MeetingNotesResult {
   summary: string;
+  plainEnglish: string;
   decisions: string[];
   actionItems: ActionItem[];
   openQuestions: string[];
@@ -22,6 +23,7 @@ export async function analyzeMeetingNotes(notesText: string): Promise<MeetingNot
 
 {
   "summary": "1 sentence: what this meeting was about and key outcome",
+  "plainEnglish": "In simple terms, explain the main topic of the meeting and what needs to happen next. Include who's responsible and when. 2-3 sentences max.",
   "decisions": ["Decision 1: what was decided", "Decision 2", "Decision 3 if critical"],
   "actionItems": [
     {
@@ -56,6 +58,7 @@ ${notesText}`;
 
   return {
     summary: analysis.summary || '',
+    plainEnglish: analysis.plainEnglish || '',
     decisions: analysis.decisions || [],
     actionItems: (analysis.actionItems || []).map((item: any) => ({
       task: item.task || '',

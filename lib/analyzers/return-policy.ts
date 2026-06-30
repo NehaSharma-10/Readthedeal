@@ -2,6 +2,7 @@ import { callGemini, parseJsonFromResponse, estimateTokens } from '../gemini-uti
 
 export interface ReturnPolicyResult {
     summary: string;
+    plainEnglish: string;
     returnWindow: string;
     conditions: string[];
     process: string[];
@@ -17,6 +18,7 @@ export async function analyzeReturnPolicy(policyText: string): Promise<ReturnPol
 
 {
   "summary": "1 sentence: what this warranty/return/refund policy covers",
+  "plainEnglish": "In simple terms, explain the return policy in a way anyone can understand. Include: how many days you have, what condition items must be in, who pays for returns, and any fees. 2-3 sentences max.",
   "returnWindow": "How many days to return or request refund",
   "conditions": ["Condition 1: what must be true", "Condition 2", "Condition 3 if critical"],
   "process": ["Step 1: how to initiate return", "Step 2: next step", "Step 3 if needed"],
@@ -46,6 +48,7 @@ ${policyText}`;
 
     return {
         summary: analysis.summary || '',
+        plainEnglish: analysis.plainEnglish || '',
         returnWindow: analysis.returnWindow || '',
         conditions: analysis.conditions || [],
         process: analysis.process || [],

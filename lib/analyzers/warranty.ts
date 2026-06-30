@@ -2,6 +2,7 @@ import { callGemini, parseJsonFromResponse, estimateTokens } from '../gemini-uti
 
 export interface WarrantyResult {
     summary: string;
+    plainEnglish: string;
     coveragePeriod: string;
     covered: string[];
     notCovered: string[];
@@ -19,6 +20,7 @@ export async function analyzeWarranty(warrantyText: string): Promise<WarrantyRes
 
 {
   "summary": "1 sentence: what product/service this warranty covers and duration",
+  "plainEnglish": "In simple everyday language, explain what this warranty covers, what it doesn't, how long it lasts, and how to make a claim if something breaks. 2-3 sentences max.",
   "coveragePeriod": "Exact coverage period (e.g., '2 years from purchase')",
   "covered": ["What IS covered 1", "What IS covered 2", "Coverage 3 if applicable"],
   "notCovered": ["Gotcha 1: what's NOT covered", "Gotcha 2: limitation", "Exclusion 3 if critical"],
@@ -49,6 +51,7 @@ ${warrantyText}`;
 
     return {
         summary: analysis.summary || '',
+        plainEnglish: analysis.plainEnglish || '',
         coveragePeriod: analysis.coveragePeriod || '',
         covered: analysis.covered || [],
         notCovered: analysis.notCovered || [],

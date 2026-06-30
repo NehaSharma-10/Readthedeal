@@ -2,6 +2,7 @@ import { callGemini, parseJsonFromResponse, estimateTokens } from '../gemini-uti
 
 export interface ContractResult {
   summary: string;
+  plainEnglish: string;
   obligations: {
     serviceProvider: string[];
     client: string[];
@@ -30,6 +31,7 @@ export async function analyzeContract(contractText: string): Promise<ContractRes
 RETURN ONLY THIS VALID JSON (no other text):
 {
   "summary": "2-3 sentences describing the contract type, key parties, duration, main service/product, and core financial terms. Make it specific and business-focused so readers immediately understand what they're signing.",
+  "plainEnglish": "In simple everyday language (like explaining to someone unfamiliar with contracts), explain what this contract means, what the person is agreeing to, and what the main risks are. 2-3 sentences max, no jargon.",
   "obligations": {
     "serviceProvider": ["obligation 1", "obligation 2", "obligation 3"],
     "client": ["obligation 1", "obligation 2", "obligation 3"]
@@ -129,6 +131,7 @@ ${contractText}`;
 
   return {
     summary: analysis.summary || '',
+    plainEnglish: analysis.plainEnglish || '',
     obligations: {
       serviceProvider: analysis.obligations?.serviceProvider || [],
       client: analysis.obligations?.client || []

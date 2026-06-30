@@ -2,6 +2,7 @@ import { callGemini, parseJsonFromResponse, estimateTokens } from '../gemini-uti
 
 export interface PrescriptionResult {
     summary: string;
+    plainEnglish: string;
     dosage: string;
     warnings: string[];
     sideEffects: string[];
@@ -18,6 +19,7 @@ export async function analyzePrescription(prescriptionText: string): Promise<Pre
 
 {
   "summary": "1 sentence: what this document is and what medication/condition it addresses",
+  "plainEnglish": "In simple everyday language, explain what this medication is for, how to take it, and the most important things to watch out for. 2-3 sentences max, no medical jargon.",
   "dosage": "Recommended dosage, frequency, and duration if specified",
   "warnings": ["Warning 1", "Warning 2", "Warning 3 if exists"],
   "sideEffects": ["Most common side effect 1", "Important side effect 2", "Other notable side effect"],
@@ -50,6 +52,7 @@ ${prescriptionText}`;
 
     return {
         summary: analysis.summary || '',
+        plainEnglish: analysis.plainEnglish || '',
         dosage: analysis.dosage || '',
         warnings: analysis.warnings || [],
         sideEffects: analysis.sideEffects || [],

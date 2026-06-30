@@ -8,6 +8,7 @@ export interface Deadline {
 
 export interface GovernmentFormResult {
   summary: string;
+  plainEnglish: string;
   whatTheyNeedToDo: string[];
   documentsRequired: string[];
   deadlines: Deadline[];
@@ -22,6 +23,7 @@ export async function analyzeGovernmentForm(formText: string): Promise<Governmen
 
 {
   "summary": "1 sentence: what this form/notice is and its purpose",
+  "plainEnglish": "In simple everyday language, explain what this form is asking for and what the person needs to do. Include key deadlines and consequences of not submitting. 2-3 sentences max.",
   "whatTheyNeedToDo": ["Action 1: step to complete", "Action 2: next step", "Action 3 if applicable"],
   "documentsRequired": ["Document 1", "Document 2", "Document 3 if needed"],
   "deadlines": [
@@ -53,6 +55,7 @@ ${formText}`;
 
   return {
     summary: analysis.summary || '',
+    plainEnglish: analysis.plainEnglish || '',
     whatTheyNeedToDo: analysis.whatTheyNeedToDo || [],
     documentsRequired: analysis.documentsRequired || [],
     deadlines: (analysis.deadlines || []).map((d: any) => ({

@@ -10,6 +10,8 @@ export interface MessageResult {
     verdict: 'clean' | 'uncertain' | 'scam_likely';
     redFlags: string[];
     reasoning: string;
+    summary: string;
+    plainEnglish: string;
     urls: LinkAnalysis[];
     shortCircuited: boolean;
     provider: string;
@@ -54,6 +56,8 @@ export async function analyzeMessage(messageText: string): Promise<MessageResult
             verdict: 'clean',
             redFlags: [],
             reasoning: 'Too short, and no links or scam-pattern keywords present to meaningfully assess — reads like an ordinary personal message.',
+            summary: messageText.substring(0, 150) + (messageText.length > 150 ? '...' : ''),
+            plainEnglish: messageText.substring(0, 200),
             urls: [],
             shortCircuited: true,
             provider: 'gemini-2.5-flash'
@@ -86,10 +90,12 @@ Respond with this JSON format only:
 {
   "verdict": "clean" | "uncertain" | "scam_likely",
   "redFlags": ["flag1", "flag2"],
-  "reasoning": "1-2 sentence explanation"
+  "reasoning": "1-2 sentence explanation",
+  "summary": "Plain English explanation of what this message is about in 1-2 sentences",
+  "plainEnglish": "In very simple words (like explaining to someone unfamiliar with the topic), what is this message saying and what should the person do? Use everyday language, no jargon. 2-3 sentences max."
 }
 
-IMPORTANT: Keep reasoning to 1-2 short sentences max (25 words or less).
+IMPORTANT: Keep reasoning and summary to 1-2 short sentences max (25 words or less each). Plain English should be conversational and easy to understand.
 
 Message:
 """
@@ -114,6 +120,8 @@ ${messageText}
         verdict: analysis.verdict || 'clean',
         redFlags: analysis.redFlags || [],
         reasoning: analysis.reasoning || '',
+        summary: analysis.summary || '',
+        plainEnglish: analysis.plainEnglish || '',
         urls: linkAnalyses,
         shortCircuited: false,
         provider: 'gemini-2.5-flash'

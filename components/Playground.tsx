@@ -315,15 +315,6 @@ export default function Playground() {
                             </div>
                         ) : result ? (
                             <div className="space-y-2 text-xs md:text-sm">
-                                {/* Detected Mode Info */}
-                                {detectedMode && (
-                                    <div className="p-4 bg-blue-50 border-2 border-blue-300 rounded-lg mb-4">
-                                        <p className="text-blue-900 font-bold text-sm">
-                                            ✓ Detected as: <span className="capitalize text-lg">{detectedMode === 'returns' ? 'Return Policy' : detectedMode === 'government' ? 'Government Form' : detectedMode === 'message' ? 'Suspicious Message' : detectedMode === 'prescription' ? 'Prescription' : detectedMode === 'meeting' ? 'Meeting Notes' : detectedMode === 'warranty' ? 'Warranty' : 'Contract'}</span>
-                                        </p>
-                                    </div>
-                                )}
-
                                 {/* Verdict Badge */}
                                 {result.verdict && (
                                     <div className={`p-3 rounded-lg ${getVerdictStyle(result.verdict).container}`}>
@@ -333,11 +324,107 @@ export default function Playground() {
                                     </div>
                                 )}
 
+                                {/* Safety Summary Message */}
+                                {result.verdict && (
+                                    <div className={`p-3 rounded-lg border ${result.verdict === 'clean' || result.verdict === 'buyer_friendly' || result.verdict === 'strong'
+                                        ? 'bg-green-50 border-green-200 text-green-900'
+                                        : result.verdict === 'scam_likely' || result.verdict === 'buyer_unfriendly' || result.verdict === 'weak'
+                                            ? 'bg-red-50 border-red-200 text-red-900'
+                                            : 'bg-yellow-50 border-yellow-200 text-yellow-900'
+                                        }`}>
+                                        <p className="text-xs font-semibold mb-1">
+                                            {result.verdict === 'clean' || result.verdict === 'buyer_friendly' || result.verdict === 'strong'
+                                                ? '✅ This appears to be safe and legitimate.'
+                                                : result.verdict === 'scam_likely' || result.verdict === 'buyer_unfriendly' || result.verdict === 'weak'
+                                                    ? '⚠️ This message contains warnings or red flags. Review carefully before taking action.'
+                                                    : '⚠️ This message has some unclear or uncertain aspects. Review the details below.'}
+                                        </p>
+                                        {result.redFlags && result.redFlags.length > 0 && (
+                                            <p className="text-xs">Key concerns: {result.redFlags.slice(0, 2).join(', ')}</p>
+                                        )}
+                                        {!result.redFlags || result.redFlags.length === 0 && (result.verdict === 'clean' || result.verdict === 'buyer_friendly' || result.verdict === 'strong') && (
+                                            <p className="text-xs">No major concerns detected.</p>
+                                        )}
+                                    </div>
+                                )}
+
                                 {/* Summary */}
-                                {result.summary && (
+                                {result.summary && displayMode === 'message' && (
+                                    <div>
+                                        <h3 className="font-semibold mb-1 text-ink text-xs">What This Message Says</h3>
+                                        <p className="text-ink-soft text-xs leading-snug">{result.summary}</p>
+                                    </div>
+                                )}
+
+                                {/* Summary for other modes */}
+                                {result.summary && displayMode !== 'message' && (
                                     <div>
                                         <h3 className="font-semibold mb-1 text-ink text-xs">Summary</h3>
                                         <p className="text-ink-soft text-xs leading-snug">{result.summary}</p>
+                                    </div>
+                                )}
+
+                                {/* WHAT YOU NEED TO KNOW - Message: Plain English Explanation */}
+                                {displayMode === 'message' && result.plainEnglish && (
+                                    <div className="p-3 rounded-lg bg-blue-50 border border-blue-200">
+                                        <h3 className="font-semibold mb-1 text-ink text-xs">📋 What This Message Means</h3>
+                                        <p className="text-xs text-ink-soft leading-snug">{result.plainEnglish}</p>
+                                    </div>
+                                )}
+
+                                {/* WHAT YOU NEED TO KNOW - Contract */}
+                                {displayMode === 'contract' && result.plainEnglish && (
+                                    <div className="p-3 rounded-lg bg-blue-50 border border-blue-200">
+                                        <h3 className="font-semibold mb-1 text-ink text-xs">📋 Plain English Explanation</h3>
+                                        <p className="text-xs text-ink-soft leading-snug mb-3">{result.plainEnglish}</p>
+                                        {result.assessment?.recommendedReview && result.assessment.recommendedReview.length > 0 && (
+                                            <div>
+                                                <p className="text-xs font-semibold text-ink mb-1">Before You Sign:</p>
+                                                <ul className="text-xs text-ink-soft space-y-1">
+                                                    {result.assessment.recommendedReview.map((item: string, i: number) => <li key={i}>• {item}</li>)}
+                                                </ul>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* WHAT YOU NEED TO KNOW - Prescription */}
+                                {displayMode === 'prescription' && result.plainEnglish && (
+                                    <div className="p-3 rounded-lg bg-blue-50 border border-blue-200">
+                                        <h3 className="font-semibold mb-1 text-ink text-xs">📋 Plain English Explanation</h3>
+                                        <p className="text-xs text-ink-soft leading-snug">{result.plainEnglish}</p>
+                                    </div>
+                                )}
+
+                                {/* WHAT YOU NEED TO KNOW - Return/Warranty */}
+                                {(displayMode === 'returns' || displayMode === 'warranty') && result.plainEnglish && (
+                                    <div className="p-3 rounded-lg bg-blue-50 border border-blue-200">
+                                        <h3 className="font-semibold mb-1 text-ink text-xs">📋 Plain English Explanation</h3>
+                                        <p className="text-xs text-ink-soft leading-snug mb-3">{result.plainEnglish}</p>
+                                        {result.risks && result.risks.length > 0 && (
+                                            <div>
+                                                <p className="text-xs font-semibold text-ink mb-1">Important Details:</p>
+                                                <ul className="text-xs text-ink-soft space-y-1">
+                                                    {result.risks.slice(0, 3).map((risk: string, i: number) => <li key={i}>• {risk}</li>)}
+                                                </ul>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* WHAT YOU NEED TO KNOW - Government Form */}
+                                {displayMode === 'government' && result.plainEnglish && (
+                                    <div className="p-3 rounded-lg bg-blue-50 border border-blue-200">
+                                        <h3 className="font-semibold mb-1 text-ink text-xs">📋 Plain English Explanation</h3>
+                                        <p className="text-xs text-ink-soft leading-snug">{result.plainEnglish}</p>
+                                    </div>
+                                )}
+
+                                {/* WHAT YOU NEED TO KNOW - Meeting Notes */}
+                                {displayMode === 'meeting' && result.plainEnglish && (
+                                    <div className="p-3 rounded-lg bg-blue-50 border border-blue-200">
+                                        <h3 className="font-semibold mb-1 text-ink text-xs">📋 Plain English Explanation</h3>
+                                        <p className="text-xs text-ink-soft leading-snug">{result.plainEnglish}</p>
                                     </div>
                                 )}
 
