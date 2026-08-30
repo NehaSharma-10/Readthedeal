@@ -22,8 +22,8 @@ export async function callGroq(prompt: string): Promise<string> {
 
     const message = await withTimeout(
         client.chat.completions.create({
-            model: 'llama-3.3-70b-versatile',
-            max_tokens: 1024,
+            model: 'llama-3.1-70b-versatile',
+            max_tokens: 2048,
             messages: [
                 {
                     role: 'user',

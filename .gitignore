@@ -11,6 +11,7 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+pnpm-lock.yaml
 
 # ==================
 # TESTING
@@ -18,6 +19,7 @@
 /coverage
 .nyc_output
 *.lcov
+.test-results/
 
 # ==================
 # NEXT.JS
@@ -25,6 +27,8 @@
 /.next/
 /out/
 *.prod.js
+.turbo/
+.incrementalcache/
 
 # ==================
 # PRODUCTION & BUILD
@@ -32,6 +36,8 @@
 /build
 /dist
 *.tsbuildinfo
+.cache/
+*.cache
 
 # ==================
 # ENVIRONMENT & SECRETS
@@ -75,7 +81,6 @@ yarn-error.log*
 lerna-debug.log*
 *.log
 logs/
-*.log
 
 # ==================
 # SYSTEM FILES
@@ -96,6 +101,13 @@ desktop.ini
 .netlify
 .env.production
 .now
+
+# ==================
+# APPWRITE & DATABASE
+# ==================
+.appwrite/
+local.db
+*.db
 
 # ==================
 # NODE

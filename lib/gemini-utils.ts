@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { callGroq } from './groq-utils';
 
-const MODEL = 'gemini-2.0-flash';
+const MODEL = 'gemini-3.6-flash';
 const TIMEOUT_MS = 90000; // 90 second timeout for long documents
 
 function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
@@ -14,28 +14,15 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 }
 
 export async function callGemini(prompt: string): Promise<string> {
-    if (!process.env.GROQ_API_KEY) {
-        throw new Error('GROQ_API_KEY is not set');
+    if (!process.env.GOOGLE_API_KEY) {
+        throw new Error('GOOGLE_API_KEY is not set');
     }
 
-    let lastGroqError: string | null = null;
     let lastGeminiError: string | null = null;
+    let lastGroqError: string | null = null;
 
-    // Try Groq first
+    // Try Gemini 2.0 first (primary provider)
     try {
-        const result = await callGroq(prompt);
-        return result;
-    } catch (groqError) {
-        lastGroqError = groqError instanceof Error ? groqError.message : 'Unknown Groq error';
-        console.warn(`⚠️ [GROQ] Request failed: ${lastGroqError}`);
-    }
-
-    // Try Gemini 2.0 as fallback
-    try {
-        if (!process.env.GOOGLE_API_KEY) {
-            throw new Error('GOOGLE_API_KEY is not set (fallback)');
-        }
-
         const client = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
         const model = client.getGenerativeModel({ model: MODEL });
 
@@ -49,11 +36,25 @@ export async function callGemini(prompt: string): Promise<string> {
         return responseText;
     } catch (geminiError) {
         lastGeminiError = geminiError instanceof Error ? geminiError.message : 'Unknown Gemini error';
-        console.error(`❌ [GEMINI] Request failed: ${lastGeminiError}`);
+        console.warn(`⚠️ [GEMINI] Request failed: ${lastGeminiError}`);
+    }
+
+    // Try Groq as fallback (only if Gemini fails and Groq key is available)
+    try {
+        if (!process.env.GROQ_API_KEY) {
+            throw new Error('GROQ_API_KEY is not set (fallback not available)');
+        }
+
+        const result = await callGroq(prompt);
+        console.info(`✅ [GROQ] Fallback succeeded`);
+        return result;
+    } catch (groqError) {
+        lastGroqError = groqError instanceof Error ? groqError.message : 'Unknown Groq error';
+        console.error(`❌ [GROQ] Fallback also failed: ${lastGroqError}`);
 
         // Both providers failed
         throw new Error(
-            `All AI providers unavailable: Groq: ${lastGroqError || 'not attempted'}, Gemini: ${lastGeminiError}`
+            `All AI providers unavailable: Gemini: ${lastGeminiError}, Groq: ${lastGroqError}`
         );
     }
 }
@@ -64,11 +65,20 @@ export function parseJsonFromResponse(responseText: string): any {
         return JSON.parse(responseText);
     } catch {
         // Extract JSON from response if it's wrapped in other text
-        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-        if (!jsonMatch) {
-            throw new Error('Failed to extract JSON from response');
+        // Try to find the largest JSON object/array
+        const jsonMatches = responseText.match(/\{[\s\S]*\}|\[[\s\S]*\]/g);
+        if (!jsonMatches || jsonMatches.length === 0) {
+            throw new Error('Failed to extract JSON from response: no JSON found');
         }
-        return JSON.parse(jsonMatch[0]);
+        
+        // Use the longest match (likely the main content)
+        const largestMatch = jsonMatches.reduce((a, b) => a.length > b.length ? a : b);
+        
+        try {
+            return JSON.parse(largestMatch);
+        } catch (parseError) {
+            throw new Error(`Failed to parse extracted JSON: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
+        }
     }
 }
 
