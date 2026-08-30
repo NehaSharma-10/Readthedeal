@@ -1,5 +1,5 @@
+import { logDocument } from '@/app/api/analyze-contract/document-logger';
 import cron from 'node-cron';
-import { logDocument } from '../api/analyze-contract/document-logger';
 
 let scheduleInitialized = false;
 
